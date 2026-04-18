@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#f5f0e8">
+<title>Nupur Tomar — Product Analyst</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─── */
+:root {
+  --ink: #0d0d0d;
+  --paper: #f5f0e8;
+  --paper2: #ede8dc;
+  --accent: #c8402f;
+  --muted: #6b6358;
+  --border: rgba(13,13,13,0.12);
+  --card-bg: #ffffff;
+  --nav-h: 64px;
+  --pad-x: clamp(16px, 5vw, 80px);
+  --pad-section: clamp(56px, 8vw, 100px);
+}
+
+/* ─── RESET ─── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); overflow-x: hidden; line-height: 1.6; }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+
+/* noise overlay */
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9999; opacity: 0.35;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: var(--nav-h);
+  padding: 0 var(--pad-x);
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(245,240,232,0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+  font-weight: 700; letter-spacing: -0.02em;
+  color: var(--ink); text-decoration: none;
+  flex-shrink: 0;
+}
+.nav-links { display: flex; gap: clamp(16px, 3vw, 36px); list-style: none; }
+.nav-links a {
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(0.62rem, 1.2vw, 0.72rem);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none;
+  transition: color 0.2s; white-space: nowrap;
+}
+.nav-links a:hover { color: var(--ink); }
+
+/* hamburger - hidden on desktop */
+.hamburger {
+  display: none;
+  flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: pointer;
+  padding: 6px; z-index: 300;
+}
+.hamburger span {
+  display: block; width: 22px; height: 2px;
+  background: var(--ink); border-radius: 2px;
+  transition: all 0.28s ease;
+  transform-origin: center;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* mobile drawer */
+.mobile-menu {
+  display: none;
+  position: fixed; top: var(--nav-h); left: 0; right: 0;
+  background: var(--paper);
+  border-bottom: 2px solid var(--accent);
+  z-index: 190; padding: 24px var(--pad-x);
+  flex-direction: column; gap: 0;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+  transition: color 0.2s;
+}
+.mobile-menu a:last-child { border-bottom: none; }
+.mobile-menu a:hover { color: var(--accent); }
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding-top: var(--nav-h);
+}
+.hero-left {
+  padding: clamp(40px, 6vw, 80px) var(--pad-x);
+  display: flex; flex-direction: column; justify-content: center;
+}
+.hero-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(0.6rem, 1.2vw, 0.7rem);
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent);
+  margin-bottom: clamp(18px, 3vw, 28px);
+  display: flex; align-items: center; gap: 12px;
+  animation: fadeUp 0.6s ease 0.1s both;
+}
+.hero-tag::before { content: ''; width: 28px; height: 1px; background: var(--accent); flex-shrink: 0; }
+.hero-name {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.8rem, 6vw, 5.5rem);
+  font-weight: 900; line-height: 0.95; letter-spacing: -0.03em;
+  margin-bottom: 8px;
+  animation: fadeUp 0.6s ease 0.2s both;
+}
+.hero-name em { font-style: italic; color: var(--accent); }
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(0.95rem, 2vw, 1.45rem);
+  font-weight: 400; font-style: italic; color: var(--muted);
+  margin-bottom: clamp(24px, 4vw, 40px); margin-top: 14px;
+  animation: fadeUp 0.6s ease 0.3s both;
+}
+.hero-summary {
+  font-size: clamp(0.85rem, 1.5vw, 0.95rem);
+  line-height: 1.8; color: var(--muted);
+  max-width: 500px; margin-bottom: clamp(32px, 5vw, 48px);
+  font-weight: 300;
+  animation: fadeUp 0.6s ease 0.4s both;
+}
+.hero-summary strong { color: var(--ink); font-weight: 600; }
+.hero-ctas {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  animation: fadeUp 0.6s ease 0.5s both;
+}
+.btn-primary {
+  padding: clamp(11px, 2vw, 14px) clamp(20px, 3vw, 32px);
+  background: var(--ink); color: var(--paper);
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(0.65rem, 1.2vw, 0.72rem);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  text-decoration: none; transition: background 0.25s;
+  display: inline-block;
+}
+.btn-primary:hover { background: var(--accent); }
+.btn-outline {
+  padding: clamp(11px, 2vw, 14px) clamp(20px, 3vw, 32px);
+  background: transparent; color: var(--ink);
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(0.65rem, 1.2vw, 0.72rem);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  text-decoration: none; border: 1.5px solid var(--ink);
+  transition: all 0.25s; display: inline-block;
+}
+.btn-outline:hover { background: var(--ink); color: var(--paper); }
+
+.hero-right {
+  background: var(--ink);
+  padding: clamp(40px, 6vw, 80px) var(--pad-x);
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.hero-right::before {
+  content: ''; position: absolute; top: -80px; right: -80px;
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, rgba(200,64,47,0.22) 0%, transparent 70%);
+  pointer-events: none;
+}
+.stat-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 2px; margin-bottom: 32px;
+}
+.stat-card {
+  padding: clamp(18px, 3vw, 28px) clamp(16px, 2.5vw, 24px);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: background 0.2s;
+}
+.stat-card:hover { background: rgba(255,255,255,0.09); }
+.stat-number {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 900; color: #fff; line-height: 1; margin-bottom: 6px;
+}
+.stat-accent { color: var(--accent); }
+.stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(0.55rem, 1vw, 0.63rem);
+  letter-spacing: 0.07em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+}
+.hero-skills { display: flex; flex-wrap: wrap; gap: 7px; }
+.skill-tag {
+  padding: 5px 12px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.11);
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(0.55rem, 1vw, 0.62rem);
+  letter-spacing: 0.07em; text-transform: uppercase;
+  color: rgba(255,255,255,0.52);
+}
+
+/* ─── SECTIONS ─── */
+section { padding: var(--pad-section) var(--pad-x); }
+.section-header {
+  display: flex; align-items: baseline; gap: 20px;
+  margin-bottom: clamp(40px, 6vw, 64px);
+  flex-wrap: wrap;
+}
+.section-number {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem; color: var(--accent); letter-spacing: 0.1em;
+  flex-shrink: 0;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 700; letter-spacing: -0.02em; line-height: 1.1;
+}
+.section-line {
+  flex: 1; min-width: 40px; height: 1px;
+  background: var(--border); margin-bottom: 5px;
+}
+
+/* ─── IMPACT BAR ─── */
+.impact-section {
+  background: var(--ink); color: white;
+  padding: clamp(48px, 7vw, 70px) var(--pad-x);
+}
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: rgba(255,255,255,0.08);
+}
+.impact-item {
+  background: var(--ink);
+  padding: clamp(24px, 4vw, 36px) clamp(16px, 3vw, 28px);
+  text-align: center; transition: background 0.2s;
+}
+.impact-item:hover { background: rgba(200,64,47,0.12); }
+.impact-big {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 900; color: var(--accent); line-height: 1; margin-bottom: 10px;
+}
+.impact-desc {
+  font-size: clamp(0.72rem, 1.3vw, 0.82rem);
+  color: rgba(255,255,255,0.45); line-height: 1.5; font-weight: 300;
+}
+
+/* ─── WORK ─── */
+.work-section { background: var(--paper2); }
+.work-grid { display: grid; gap: 3px; }
+.work-item {
+  background: var(--card-bg);
+  padding: clamp(24px, 4vw, 40px) clamp(20px, 4vw, 44px);
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
+  gap: 28px; align-items: start;
+  border-left: 3px solid transparent;
+  transition: all 0.25s;
+}
+.work-item:hover { border-left-color: var(--accent); }
+.work-company {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 6px;
+}
+.work-period {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem; color: var(--muted); letter-spacing: 0.05em;
+}
+.work-role {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.1rem, 2.5vw, 1.45rem);
+  font-weight: 700; margin-bottom: 8px; letter-spacing: -0.02em;
+}
+.work-tagline {
+  font-size: 0.83rem; color: var(--muted);
+  font-style: italic; margin-bottom: 16px; font-weight: 300;
+}
+.work-bullets { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.work-bullets li {
+  font-size: clamp(0.82rem, 1.5vw, 0.87rem);
+  line-height: 1.65; color: #333;
+  padding-left: 20px; position: relative; font-weight: 300;
+}
+.work-bullets li::before {
+  content: '→'; position: absolute; left: 0;
+  color: var(--accent); font-size: 0.78rem;
+}
+.work-bullets strong { color: var(--ink); font-weight: 600; }
+.badge {
+  padding: 6px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase;
+  background: var(--ink); color: var(--paper); white-space: nowrap;
+  display: inline-block;
+}
+
+/* ─── PROJECTS ─── */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3px;
+}
+.project-card {
+  background: var(--card-bg);
+  padding: clamp(24px, 4vw, 36px) clamp(20px, 4vw, 40px);
+  position: relative; overflow: hidden; transition: transform 0.25s;
+}
+.project-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px; background: var(--accent);
+  transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+}
+.project-card:hover::after { transform: scaleX(1); }
+.project-card:hover { transform: translateY(-3px); }
+.project-card.featured {
+  grid-column: span 2;
+  background: var(--ink); color: white;
+}
+.project-type {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 12px;
+}
+.project-card.featured .project-type { color: rgba(200,64,47,0.85); }
+.project-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+  font-weight: 700; margin-bottom: 12px; letter-spacing: -0.02em; line-height: 1.2;
+}
+.project-card.featured .project-title { font-size: clamp(1.2rem, 3vw, 1.7rem); color: white; }
+.project-desc {
+  font-size: clamp(0.82rem, 1.4vw, 0.86rem);
+  line-height: 1.7; color: var(--muted); margin-bottom: 18px; font-weight: 300;
+}
+.project-card.featured .project-desc { color: rgba(255,255,255,0.5); }
+.project-outcomes { display: flex; flex-direction: column; gap: 8px; }
+.outcome { display: flex; align-items: baseline; gap: 10px; }
+.outcome-number {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-weight: 700; color: var(--accent); white-space: nowrap;
+}
+.outcome-text { font-size: 0.82rem; color: var(--muted); font-weight: 300; }
+.project-card.featured .outcome-text { color: rgba(255,255,255,0.45); }
+.project-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 20px; }
+.project-tag {
+  padding: 4px 11px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.07em; text-transform: uppercase;
+  border: 1px solid var(--border); color: var(--muted);
+}
+.project-card.featured .project-tag {
+  border-color: rgba(255,255,255,0.14); color: rgba(255,255,255,0.35);
+}
+
+/* ─── SKILLS ─── */
+.skills-section { background: var(--paper2); }
+.skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+.skill-group { background: var(--card-bg); padding: clamp(24px, 4vw, 36px) clamp(20px, 3vw, 32px); }
+.skill-group-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.63rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 22px;
+  padding-bottom: 12px; border-bottom: 1px solid var(--border);
+}
+.skill-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.skill-item { display: flex; align-items: center; gap: 12px; }
+.skill-name { font-size: 0.87rem; color: var(--ink); font-weight: 400; flex: 1; min-width: 0; }
+.skill-bar-bg { width: 64px; height: 3px; background: var(--paper2); flex-shrink: 0; }
+.skill-bar { height: 100%; background: var(--ink); }
+.edu-grid { margin-top: 3px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+
+/* ─── CONTACT ─── */
+.contact-section {
+  background: var(--ink); color: white;
+  text-align: center;
+  padding: clamp(72px, 10vw, 120px) var(--pad-x);
+}
+.contact-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 24px;
+}
+.contact-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 900; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 20px;
+}
+.contact-sub {
+  font-size: clamp(0.85rem, 1.6vw, 0.93rem);
+  color: rgba(255,255,255,0.42); font-weight: 300;
+  margin-bottom: 44px; max-width: 500px;
+  margin-left: auto; margin-right: auto; line-height: 1.75;
+}
+.contact-links { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.contact-link {
+  padding: clamp(12px, 2vw, 16px) clamp(20px, 4vw, 36px);
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(0.62rem, 1.2vw, 0.72rem);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  text-decoration: none; transition: all 0.25s;
+  display: inline-block;
+}
+.contact-link.primary { background: var(--accent); color: white; }
+.contact-link.primary:hover { background: #a8332a; }
+.contact-link.secondary { border: 1.5px solid rgba(255,255,255,0.22); color: rgba(255,255,255,0.6); }
+.contact-link.secondary:hover { border-color: white; color: white; }
+
+/* ─── FOOTER ─── */
+footer {
+  background: #0a0a0a; padding: 22px var(--pad-x);
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 8px;
+}
+.footer-copy, .footer-role {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem; letter-spacing: 0.06em; color: rgba(255,255,255,0.22);
+}
+
+/* ─── ANIMATION ─── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ─── TABLET (≤ 1024px) ─── */
+@media (max-width: 1024px) {
+  .impact-grid { grid-template-columns: repeat(2, 1fr); }
+  .skills-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ─── SMALL TABLET / LARGE PHONE (≤ 768px) ─── */
+@media (max-width: 768px) {
+  /* nav */
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+
+  /* hero stacks */
+  .hero { grid-template-columns: 1fr; min-height: auto; }
+  .hero-left { padding: clamp(36px, 8vw, 56px) var(--pad-x) clamp(32px, 6vw, 48px); }
+  .hero-right { padding: clamp(36px, 8vw, 48px) var(--pad-x); }
+  .hero-right::before { display: none; }
+
+  /* impact 2-col */
+  .impact-grid { grid-template-columns: 1fr 1fr; }
+
+  /* work single col */
+  .work-item {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    border-left: 3px solid transparent;
+  }
+  .work-item:hover { transform: none; border-left-color: var(--accent); }
+
+  /* projects single col */
+  .projects-grid { grid-template-columns: 1fr; }
+  .project-card.featured { grid-column: span 1; }
+  .project-card:hover { transform: none; }
+
+  /* skills single col */
+  .skills-grid { grid-template-columns: 1fr; }
+  .edu-grid { grid-template-columns: 1fr; }
+
+  /* footer stack */
+  footer { flex-direction: column; text-align: center; }
+}
+
+/* ─── PHONE (≤ 480px) ─── */
+@media (max-width: 480px) {
+  :root { --pad-x: 16px; }
+
+  .hero-name { font-size: clamp(2.6rem, 13vw, 3.8rem); }
+
+  .stat-grid { grid-template-columns: 1fr 1fr; gap: 2px; }
+  .stat-number { font-size: 2rem; }
+
+  .impact-grid { grid-template-columns: 1fr 1fr; }
+  .impact-big { font-size: 1.8rem; }
+
+  .section-line { display: none; }
+
+  .work-item { padding: 24px 18px; }
+
+  .project-card { padding: 24px 18px; }
+  .project-card::after { display: none; }
+
+  .contact-title { font-size: clamp(1.8rem, 10vw, 2.8rem); }
+  .contact-links { flex-direction: column; align-items: center; }
+  .contact-link { width: 100%; max-width: 300px; text-align: center; }
+
+  .hero-ctas { flex-direction: column; }
+  .btn-primary, .btn-outline { text-align: center; }
+}
+
+/* ─── VERY SMALL (≤ 360px) ─── */
+@media (max-width: 360px) {
+  .stat-number { font-size: 1.7rem; }
+  .impact-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── TOUCH: remove hover transforms on touch devices ─── */
+@media (hover: none) {
+  .work-item:hover { transform: none; border-left-color: transparent; }
+  .project-card:hover { transform: none; }
+  .project-card:hover::after { transform: scaleX(0); }
+  .stat-card:hover { background: rgba(255,255,255,0.05); }
+  .impact-item:hover { background: var(--ink); }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Nupur Tomar</a>
+  <ul class="nav-links">
+    <li><a href="#work">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" role="navigation">
+  <a href="#work" onclick="closeMenu()">Experience</a>
+  <a href="#projects" onclick="closeMenu()">Projects</a>
+  <a href="#skills" onclick="closeMenu()">Skills</a>
+  <a href="#contact" onclick="closeMenu()">Contact</a>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Product Analyst · B2B SaaS · AI Analytics</div>
+    <h1 class="hero-name">Nupur<br><em>Tomar</em></h1>
+    <p class="hero-title">Turning messy data into decisions that move metrics</p>
+    <p class="hero-summary">
+      2.5+ years owning analytics products for enterprise B2B SaaS — surfacing a <strong>48% revenue undercount</strong> that reset leadership's pricing strategy, building bug intelligence across <strong>8 product cohorts</strong>, and shipping dashboards consumed daily by C-suite and PMs. Hands-on with SQL, Power BI, Python, and GenAI tooling.
+    </p>
+    <div class="hero-ctas">
+      <a href="#work" class="btn-primary">View My Work</a>
+      <a href="#contact" class="btn-outline">Get In Touch</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-number">48<span class="stat-accent">%</span></div>
+        <div class="stat-label">Revenue undercount surfaced</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">350<span class="stat-accent">+</span></div>
+        <div class="stat-label">Bugs analysed across cohorts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">5<span class="stat-accent">+</span></div>
+        <div class="stat-label">Power BI dashboards owned</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">60<span class="stat-accent">%</span></div>
+        <div class="stat-label">Query resolution time cut</div>
+      </div>
+    </div>
+    <div class="hero-skills">
+      <span class="skill-tag">SQL</span>
+      <span class="skill-tag">Power BI</span>
+      <span class="skill-tag">Python</span>
+      <span class="skill-tag">GenAI</span>
+      <span class="skill-tag">Product Analytics</span>
+      <span class="skill-tag">KPI Design</span>
+      <span class="skill-tag">Bug Intelligence</span>
+      <span class="skill-tag">DAX</span>
+    </div>
+  </div>
+</div>
+
+<!-- IMPACT BAR -->
+<div class="impact-section">
+  <div class="impact-grid">
+    <div class="impact-item">
+      <div class="impact-big">48%</div>
+      <div class="impact-desc">Revenue undercount corrected — directly influenced C-suite pricing strategy</div>
+    </div>
+    <div class="impact-item">
+      <div class="impact-big">8</div>
+      <div class="impact-desc">Product cohorts mapped in a cross-cohort bug intelligence system</div>
+    </div>
+    <div class="impact-item">
+      <div class="impact-big">~25%</div>
+      <div class="impact-desc">Reduction in stakeholder decision turnaround through automated reporting</div>
+    </div>
+    <div class="impact-item">
+      <div class="impact-big">~55%</div>
+      <div class="impact-desc">MoM volume drop flagged proactively before leadership escalation</div>
+    </div>
+  </div>
+</div>
+
+<!-- EXPERIENCE -->
+<section id="work" class="work-section">
+  <div class="section-header">
+    <span class="section-number">01</span>
+    <h2 class="section-title">Experience</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="work-grid">
+
+    <div class="work-item">
+      <div>
+        <div class="work-company">Cloud Telephony SaaS</div>
+        <div class="work-period">Sept 2025 – Present</div>
+      </div>
+      <div>
+        <h3 class="work-role">Product Analyst</h3>
+        <p class="work-tagline">Enterprise B2B SaaS · India & US markets</p>
+        <ul class="work-bullets">
+          <li>Audited ARPU calculation logic and surfaced a <strong>48% revenue undercount</strong> — findings reset leadership's pricing benchmarks and growth strategy</li>
+          <li>Built and own <strong>5+ Power BI dashboards</strong> (Platform Performance, Integrations Adoption, Revenue MoM Tracker, Bug Trend Analysis) consumed daily by C-suite and PMs</li>
+          <li>Designed a cross-cohort Bug Trend Analysis system across <strong>8 product cohorts, 350+ bugs</strong> — identified recurring failure patterns and delivered P0–P2 prioritised remediation actions adopted org-wide</li>
+          <li>Built a <strong>GPT-powered quarterly insight wrapper</strong> auto-summarising bug trends, cohort health, and feature ideas per sprint</li>
+          <li>Proactively flagged a <strong>~55% MoM volume drop</strong> to leadership before escalation</li>
+        </ul>
+      </div>
+      <div><span class="badge">Current</span></div>
+    </div>
+
+    <div class="work-item">
+      <div>
+        <div class="work-company">Global Real Estate Firm</div>
+        <div class="work-period">Sept 2023 – May 2025</div>
+      </div>
+      <div>
+        <h3 class="work-role">Assistant Manager, Data Analyst</h3>
+        <p class="work-tagline">Analytics serving 50+ business stakeholders</p>
+        <ul class="work-bullets">
+          <li>Identified a <strong>4–5% monthly rise in energy consumption</strong> through facility data analysis — led to a company-wide operational change with measurable cost savings</li>
+          <li>Caught a systematic data quality failure in waste reporting and introduced an automated measurement solution eliminating the flawed practice entirely</li>
+          <li>Built 4–5 end-to-end dashboards, cutting stakeholder decision turnaround by <strong>~25%</strong> through automated reporting workflows</li>
+        </ul>
+      </div>
+      <div><span class="badge">2 yrs</span></div>
+    </div>
+
+    <div class="work-item">
+      <div>
+        <div class="work-company">Early-Stage Startup</div>
+        <div class="work-period">July 2023 – Sept 2023</div>
+      </div>
+      <div>
+        <h3 class="work-role">Data Analyst</h3>
+        <p class="work-tagline">Internal tooling & product analytics</p>
+        <ul class="work-bullets">
+          <li>Deployed a <strong>GenAI-powered knowledge assistant</strong> reducing query resolution time by <strong>60%</strong> for a team of 10–20</li>
+          <li>Standardised KPI frameworks across product, engineering, and business — enabling leadership to accurately assess product health for the first time</li>
+        </ul>
+      </div>
+      <div><span class="badge">Early</span></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-header">
+    <span class="section-number">02</span>
+    <h2 class="section-title">Key Projects</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="projects-grid">
+
+    <div class="project-card featured">
+      <div class="project-type">Bug Intelligence · Dec 2025 – Mar 2026</div>
+      <h3 class="project-title">Cross-Cohort Bug Trend & Quality Intelligence System</h3>
+      <p class="project-desc">Designed and owned a structured bug intelligence framework across 8 product cohorts — analysing 350+ bugs for qualification rates, critical failure patterns, postmortem quality, and platform-level breakdowns. Identified the highest-risk cohort (63% NQ rate, 50% of all company-wide criticals) and the best-performing (72% meaningful postmortems). Delivered P0–P2 prioritised remediation actions per PM and Tech Lead, adopted org-wide.</p>
+      <div class="project-outcomes">
+        <div class="outcome"><span class="outcome-number">5</span><span class="outcome-text">recurring cross-cohort failure patterns identified and documented with actionable fixes</span></div>
+        <div class="outcome"><span class="outcome-number">36%</span><span class="outcome-text">placeholder RCA rate eliminated via approved Jira automation rule</span></div>
+      </div>
+      <div class="project-tags">
+        <span class="project-tag">Power BI</span><span class="project-tag">SQL</span><span class="project-tag">Bug Triage</span><span class="project-tag">Postmortem Quality</span><span class="project-tag">Root Cause Analysis</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-type">Revenue Analytics</div>
+      <h3 class="project-title">ARPA / ARPU MoM Revenue Metrics Dashboard</h3>
+      <p class="project-desc">Built SQL-based pipelines tracking ARPA, ARPU (per agent + per product quantity), MRR, and client count month-over-month. Corrected broken calculation logic that had been underreporting revenue for months.</p>
+      <div class="project-outcomes">
+        <div class="outcome"><span class="outcome-number">48%</span><span class="outcome-text">revenue undercount surfaced — directly influenced pricing decisions at leadership level</span></div>
+      </div>
+      <div class="project-tags">
+        <span class="project-tag">SQL</span><span class="project-tag">Power BI</span><span class="project-tag">DAX</span><span class="project-tag">MRR · ARPA · ARPU</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-type">Product Analytics</div>
+      <h3 class="project-title">Integration Adoption & Platform Performance Dashboards</h3>
+      <p class="project-desc">Built product adoption trackers across two platform variants tracking MAU, total calls, CRM preferences, and agent-level usage. Monitored adoption trends and proactively surfaced a sharp volume decline before leadership escalation.</p>
+      <div class="project-outcomes">
+        <div class="outcome"><span class="outcome-number">~55%</span><span class="outcome-text">MoM volume drop flagged before it escalated</span></div>
+        <div class="outcome"><span class="outcome-number">12–16%</span><span class="outcome-text">integration adoption rate tracked across CRM ecosystems</span></div>
+      </div>
+      <div class="project-tags">
+        <span class="project-tag">Power BI</span><span class="project-tag">MAU</span><span class="project-tag">CRM Analytics</span><span class="project-tag">Adoption Tracking</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-type">AI Tooling</div>
+      <h3 class="project-title">GPT-Powered Quarterly Bug Insight Wrapper</h3>
+      <p class="project-desc">Built a GenAI-powered wrapper that auto-summarises bug trend data, cohort health, and feature ideas per sprint — reducing manual pre-review time for the product team and enabling faster sprint planning decisions.</p>
+      <div class="project-tags">
+        <span class="project-tag">GenAI</span><span class="project-tag">Prompt Engineering</span><span class="project-tag">Python</span><span class="project-tag">Automation</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-type">Internal Product · Concept & Architecture</div>
+      <h3 class="project-title">POPS360 — Product Operations & Performance System</h3>
+      <p class="project-desc">Designed the product vision and information architecture for an internal decision intelligence platform aggregating customer health, product usage, operational, and revenue signals into one 360° view — built for management, PMs, sales, and customer success teams at a SaaS company.</p>
+      <div class="project-tags">
+        <span class="project-tag">Product Thinking</span><span class="project-tag">IA Design</span><span class="project-tag">KPI Frameworks</span><span class="project-tag">SaaS Analytics</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="skills-section">
+  <div class="section-header">
+    <span class="section-number">03</span>
+    <h2 class="section-title">Skills & Tools</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-group">
+      <div class="skill-group-title">Analytics & Data</div>
+      <ul class="skill-list">
+        <li class="skill-item"><span class="skill-name">SQL (Advanced)</span><div class="skill-bar-bg"><div class="skill-bar" style="width:92%"></div></div></li>
+        <li class="skill-item"><span class="skill-name">Python (Pandas)</span><div class="skill-bar-bg"><div class="skill-bar" style="width:75%"></div></div></li>
+        <li class="skill-item"><span class="skill-name">KPI Definition</span><div class="skill-bar-bg"><div class="skill-bar" style="width:90%"></div></div></li>
+        <li class="skill-item"><span class="skill-name">Funnel & Adoption Analysis</span><div class="skill-bar-bg"><div class="skill-bar" style="width:85%"></div></div></li>
+        <li class="skill-item"><span class="skill-name">Data Modelling</span><div class="skill-bar-bg"><div class="skill-bar" style="width:80%"></div></div></li>
+      </ul>
+    </div>
+    <div class="skill-group">
+      <div class="skill-group-title">Visualisation & BI</div>
+      <ul class="skill-list">
+        <li class="skill-item"><span class="skill-name">Power BI + DAX</span><div class="skill-bar-bg"><div class="skill-bar" style="width:92%"></div></div></li>
+        <li class="skill-item"><span class="skill-name">Tableau</span><div class="skill-bar-bg"><div class="skill-bar" style="width:70%"></div></div></li>
+        <li class="skill-item"><span class="skill-name">Excel (Advanced)</span><div class="skill-bar-bg"><div class="skill-bar" style="width:88%"></div></div></li>
+        <li class="skill-item"><span class="skill-name">Dashboard Design</span><div class="skill-bar-bg"><div class="skill-bar" style="width:90%"></div></div></li>
+        <li class="skill-item"><span class="skill-name">Automated Reporting</span><div class="skill-bar-bg"><div class="skill-bar" style="width:85%"></div></div></li>
+      </ul>
+    </div>
+    <div class="skill-group">
+      <div class="skill-group-title">Product & AI</div>
+      <ul class="skill-list">
+        <li class="skill-item"><span class="skill-name">GenAI / GPT Tooling</span><div class="skill-bar-bg"><div class="skill-bar" style="width:85%"></div></div></li>
+        <li class="skill-item"><span class="skill-name">Bug Triage Intelligence</span><div class="skill-bar-bg"><div class="skill-bar" style="width:90%"></div></div></li>
+        <li class="skill-item"><span class="skill-name">Postmortem Quality Auditing</span><div class="skill-bar-bg"><div class="skill-bar" style="width:88%"></div></div></li>
+        <li class="skill-item"><span class="skill-name">Agile / Jira / Confluence</span><div class="skill-bar-bg"><div class="skill-bar" style="width:80%"></div></div></li>
+        <li class="skill-item"><span class="skill-name">Prompt Engineering</span><div class="skill-bar-bg"><div class="skill-bar" style="width:82%"></div></div></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="edu-grid">
+    <div class="skill-group">
+      <div class="skill-group-title">Education</div>
+      <div style="display:flex;flex-direction:column;gap:18px;">
+        <div>
+          <div style="font-size:clamp(0.85rem,1.5vw,0.9rem);font-weight:600;margin-bottom:4px;">B.Tech — Computer Science (Data Science & AI)</div>
+          <div style="font-size:clamp(0.75rem,1.3vw,0.8rem);color:var(--muted);font-weight:300;">The NorthCap University · GPA 8.0 / 10 · 2019–2023</div>
+        </div>
+        <div>
+          <div style="font-size:clamp(0.85rem,1.5vw,0.9rem);font-weight:600;margin-bottom:4px;">Product Management with Generative & Agentic AI</div>
+          <div style="font-size:clamp(0.75rem,1.3vw,0.8rem);color:var(--muted);font-weight:300;">BITS School of Management · July 2026</div>
+        </div>
+      </div>
+    </div>
+    <div class="skill-group">
+      <div class="skill-group-title">Certifications</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:clamp(0.8rem,1.4vw,0.85rem);padding-left:18px;position:relative;color:#333;font-weight:300;"><span style="position:absolute;left:0;color:var(--accent)">→</span>AI Product Management — Simplilearn</div>
+        <div style="font-size:clamp(0.8rem,1.4vw,0.85rem);padding-left:18px;position:relative;color:#333;font-weight:300;"><span style="position:absolute;left:0;color:var(--accent)">→</span>Introduction to Data Science in Python — Univ. of Michigan</div>
+        <div style="font-size:clamp(0.8rem,1.4vw,0.85rem);padding-left:18px;position:relative;color:#333;font-weight:300;"><span style="position:absolute;left:0;color:var(--accent)">→</span>AWS Cloud Practitioner</div>
+        <div style="font-size:clamp(0.8rem,1.4vw,0.85rem);padding-left:18px;position:relative;color:#333;font-weight:300;"><span style="position:absolute;left:0;color:var(--accent)">→</span>Mastering Jira with Atlassian Intelligence & Rovo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact-section">
+  <div class="contact-eyebrow">Let's talk</div>
+  <h2 class="contact-title">Open to the right<br><em style="font-style:italic;">opportunity</em></h2>
+  <p class="contact-sub">Looking for product analyst, product ops, or AI analytics roles where data shapes real decisions. I move fast, think in systems, and leave every dataset more trustworthy than I found it.</p>
+  <div class="contact-links">
+    <a href="mailto:tomar.nupur01@gmail.com" class="contact-link primary">tomar.nupur01@gmail.com</a>
+    <a href="https://linkedin.com/in/nupur-tomar-0549741a0" target="_blank" rel="noopener" class="contact-link secondary">LinkedIn</a>
+    <a href="tel:+918433450688" class="contact-link secondary">+91 84334 50688</a>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-copy">© 2026 Nupur Tomar</span>
+  <span class="footer-role">Product Analyst · B2B SaaS · AI Analytics</span>
+</footer>
+
+<script>
+  const hamburger = document.querySelector('.hamburger');
+  const mobileMenu = document.querySelector('.mobile-menu');
+
+  function closeMenu() {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+  }
+
+  hamburger.addEventListener('click', () => {
+    const isOpen = mobileMenu.classList.toggle('open');
+    hamburger.classList.toggle('open');
+    hamburger.setAttribute('aria-expanded', isOpen);
+  });
+
+  // close on outside click
+  document.addEventListener('click', (e) => {
+    if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+      closeMenu();
+    }
+  });
+</script>
+</body>
+</html>
